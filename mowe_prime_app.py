@@ -1,9 +1,9 @@
 """
-Mowe Prime Pitch Generator
+Mowe Prime Pitch Generator - Corrected & Upgraded
 Run: python3 mowe_prime_app.py
 Then open: http://localhost:5000
 
-Requirements: pip install flask reportlab gunicorn
+Requirements: pip install flask reportlab
 """
 
 from flask import Flask, request, send_file, render_template_string
@@ -11,18 +11,19 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import simpleSplit
 import io
-import os
 
 app = Flask(__name__)
 
 W, H = A4
-GREEN = (13/255, 43/255, 30/255)
-GOLD = (200/255, 168/255, 75/255)
+GREEN  = (13/255, 43/255, 30/255)
+DKGRN  = (8/255, 28/255, 18/255)
+GOLD   = (200/255, 168/255, 75/255)
 GOLD2 = (232/255, 201/255, 107/255)
 CREAM = (247/255, 243/255, 236/255)
 WHITE = (1, 1, 1)
-DARK = (0.27, 0.27, 0.27)
-MUTED = (0.42, 0.42, 0.42)
+DARK   = (0.18, 0.18, 0.18)
+MUTED  = (0.42, 0.42, 0.42)
+LGRAY  = (0.93, 0.91, 0.87)
 
 HTML = r"""<!DOCTYPE html>
 <html lang="en">
@@ -144,11 +145,11 @@ body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:#f0ece3
 </div>
 </div>
 <div class="divider"></div>
-<div class="sec-hdr">Your Contact Details</div>
+<div class="sec-hdr">Consultant Information</div>
 <div class="grid">
-<div class="field"><label>Your Name</label><input name="agent" value="{{ d.agent }}"/></div>
-<div class="field"><label>Your Phone</label><input name="phone" value="{{ d.phone }}"/></div>
-<div class="field"><label>Your Email</label><input name="email" value="{{ d.email }}"/></div>
+<div class="field"><label>Consultant Name</label><input name="agent" placeholder="Your full name" value="{{ d.agent }}"/></div>
+<div class="field"><label>Phone Number</label><input name="phone" placeholder="+234 xxx xxx xxxx" value="{{ d.phone }}"/></div>
+<div class="field"><label>Email Address</label><input name="email" placeholder="you@example.com" value="{{ d.email }}"/></div>
 <div class="field"><label>Property URL</label><input name="url" value="{{ d.url }}"/></div>
 </div>
 <div class="divider"></div>
@@ -584,5 +585,10 @@ def generate():
                                   body_hl=body_hl, body_text=body_text, cta_hl=cta_hl, cta_txt=cta_txt)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    print('\n' + '=' * 50)
+    print(' MOWE PRIME PITCH GENERATOR')
+    print('=' * 50)
+    print(' Open on THIS device: http://localhost:5000')
+    print('=' * 50)
+    print(' Press Ctrl+C to stop\n')
+    app.run(debug=False, port=5000)
