@@ -359,6 +359,16 @@ HTML = """
       <input type="text" name="property_url" placeholder="landrepublic.co/mowe-prime">
     </div>
   </div>
+  <div class="field-group">
+    <div class="field">
+      <label>Social Media Handle (optional)</label>
+      <input type="text" name="agent_social" placeholder="e.g. @asset_by_israel">
+    </div>
+    <div class="field">
+      <label>Tagline (optional)</label>
+      <input type="text" name="agent_tagline" placeholder="e.g. Your Favorite Real Estate Consultant">
+    </div>
+  </div>
 
   <div class="btn-row">
     <button type="submit" name="action" value="preview" class="submit-btn secondary">Preview Pitch</button>
@@ -498,7 +508,7 @@ HTML = """
       {% endif %}
     </div>
     <div class="cta-ci" style="display:inline-block;margin-bottom:14px;"><span class="cta-ci-l">Bank Account</span><span class="cta-ci-v">LAND REPUBLIC LIMITED &nbsp;&middot;&nbsp; 78 Finance Company or 78 MFB &nbsp;&middot;&nbsp; 0001549819</span></div>
-    <p class="cta-sig">Prepared by <strong>{{ agent_name }}</strong> &nbsp;&middot;&nbsp; @asset_by_israel &nbsp;&middot;&nbsp; Your Favorite Real Estate Consultant</p>
+    <p class="cta-sig">Prepared by <strong>{{ agent_name }}</strong>{% if agent_social %} &nbsp;&middot;&nbsp; {{ agent_social }}{% endif %}{% if agent_tagline %} &nbsp;&middot;&nbsp; {{ agent_tagline }}{% endif %}</p>
   </div>
 
 </div>
@@ -951,7 +961,7 @@ def make_comparison_pdf(styles, title, first_name):
     return elems
 
 
-def make_cta_pdf(styles, agent_name, agent_phone, agent_email, property_url, title, first_name):
+def make_cta_pdf(styles, agent_name, agent_phone, agent_email, property_url, agent_social, agent_tagline, title, first_name):
     full_title = f"{title} {first_name}"
     elems = [Spacer(1, 16)]
 
@@ -1009,7 +1019,7 @@ def make_cta_pdf(styles, agent_name, agent_phone, agent_email, property_url, tit
     ))
     inner.append(Spacer(1, 8))
     inner.append(Paragraph(
-        f"Prepared by {agent_name}  |  @asset_by_israel  |  Your Favorite Real Estate Consultant",
+        f"Prepared by {agent_name}" + (f"  |  {agent_social}" if agent_social else "") + (f"  |  {agent_tagline}" if agent_tagline else ""),
         ParagraphStyle("sig", fontName="Helvetica-Oblique", fontSize=8,
             textColor=colors.HexColor("#A8C8A8"), alignment=TA_CENTER)
     ))
@@ -1034,10 +1044,12 @@ def build_pdf(form):
     goal       = form.get("goal", "build wealth")
     profile    = form.get("profile", "home")
     tier       = form.get("tier", "both")
-    agent_name  = form.get("agent_name", "Israel Toluwalope OLALEYE")
-    agent_phone = form.get("agent_phone", "+2349033499271")
-    agent_email = form.get("agent_email", "")
+    agent_name   = form.get("agent_name", "Israel Toluwalope OLALEYE")
+    agent_phone  = form.get("agent_phone", "+2349033499271")
+    agent_email  = form.get("agent_email", "")
     property_url = form.get("property_url", "landrepublic.co/mowe-prime")
+    agent_social  = form.get("agent_social", "")
+    agent_tagline = form.get("agent_tagline", "")
 
     goal_label = GOAL_LABELS.get(goal, "Build Long-Term Wealth")
 
@@ -1061,7 +1073,7 @@ def build_pdf(form):
     story += make_why_works_pdf(styles, title, first_name)
     story += make_bungalows_pdf(styles, title, first_name)
     story += make_comparison_pdf(styles, title, first_name)
-    story += make_cta_pdf(styles, agent_name, agent_phone, agent_email, property_url, title, first_name)
+    story += make_cta_pdf(styles, agent_name, agent_phone, agent_email, property_url, agent_social, agent_tagline, title, first_name)
 
     doc.build(story)
     buf.seek(0)
@@ -1074,7 +1086,8 @@ def index():
         HTML, preview=False, full_title="", hero_sub="",
         goal_para="", show_standard=True, show_premium=True,
         tier_label="Two Entry Points",
-        agent_name="", agent_phone="", agent_email="", property_url=""
+        agent_name="", agent_phone="", agent_email="", property_url="",
+        agent_social="", agent_tagline=""
     )
 
 
@@ -1089,10 +1102,12 @@ def generate():
     goal       = form.get("goal", "build wealth")
     profile    = form.get("profile", "home")
     tier       = form.get("tier", "both")
-    agent_name  = form.get("agent_name", "Israel Toluwalope OLALEYE")
-    agent_phone = form.get("agent_phone", "+2349033499271")
-    agent_email = form.get("agent_email", "")
+    agent_name   = form.get("agent_name", "Israel Toluwalope OLALEYE")
+    agent_phone  = form.get("agent_phone", "+2349033499271")
+    agent_email  = form.get("agent_email", "")
     property_url = form.get("property_url", "")
+    agent_social  = form.get("agent_social", "")
+    agent_tagline = form.get("agent_tagline", "")
 
     goal_label = GOAL_LABELS.get(goal, "Build Long-Term Wealth")
     full_title = f"{title} {first_name}"
@@ -1117,6 +1132,8 @@ def generate():
             agent_phone=agent_phone,
             agent_email=agent_email,
             property_url=property_url,
+            agent_social=agent_social,
+            agent_tagline=agent_tagline,
         )
 
     pdf_buf = build_pdf(form)
